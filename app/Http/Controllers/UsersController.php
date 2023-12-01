@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use Illuminate\Support\Facades\Auth;                        
-use App\Models\User; 
+use Illuminate\Support\Facades\Auth;
+
+ 
+use App\Models\Micropost;
+use App\Models\User;
 
 class UsersController extends Controller
 {
@@ -40,13 +43,19 @@ class UsersController extends Controller
     
     public function followings($id)
     {
-        $user = User::findOrFail ($id);
+        // idの値でユーザを検索して取得
+        $user = User::findOrFail($id);
+
+        // 関係するモデルの件数をロード
         $user->loadRelationshipCounts();
-        $followings =$user->followings()->paginete(10);
-        
+
+        // ユーザのフォロー一覧を取得
+        $followings = $user->followings()->paginate(10);
+
+        // フォロー一覧ビューでそれらを表示
         return view('users.followings', [
             'user' => $user,
-            'user' => $followings,
+            'users' => $followings,
         ]);
     }
     
@@ -65,6 +74,27 @@ class UsersController extends Controller
         return view('users.followers', [
             'user' => $user,
             'users' => $followers,
+        ]);
+    }
+    
+    public function favorites($id)
+    {
+        // idの値でマイクロポストを検索して取得
+        $user = User::findOrFail($id);
+        // var_dump($user);
+        // exit;
+
+        // 関係するモデルの件数をロード
+        $user->loadRelationshipCounts();
+
+        // ユーザのおきにいり一覧を取得
+        $favorites = $user->favorites()->paginate(10);
+        
+
+        // お気に入り一覧ビューでそれらを表示
+        return view('users.favorites', [
+            'user' => $user,
+            'microposts' => $favorites,
         ]);
     }
 }

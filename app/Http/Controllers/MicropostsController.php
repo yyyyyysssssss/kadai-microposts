@@ -27,6 +27,8 @@ class MicropostsController extends Controller
         return view('dashboard', $data);
     }
     
+   
+    
     public function store(Request $request)
     {
         // バリデーション
